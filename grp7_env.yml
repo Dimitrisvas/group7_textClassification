@@ -1,0 +1,12 @@
+name: grp7_env
+dependencies:
+  - python=3.9
+  - gensim=3.8.*
+  - jupyter
+  - matplotlib=3.3.*
+  - nltk=3.5
+  - numpy
+  - pandas
+  - scikit-learn
+  - spacy
+  - wheel
