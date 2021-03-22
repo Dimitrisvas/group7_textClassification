@@ -44,6 +44,9 @@ def preprocess_data():
     return None
 
 def build_model(num_words):
+    EPOCHS = 30
+    INIT_LR = 1e-3
+
     model = Sequential()
 
     model.add(Embedding(num_words, 128))
@@ -53,9 +56,11 @@ def build_model(num_words):
     model.add(GlobalMaxPooling1D())
     model.add(Dense(128, activation="relu"))
     model.add(Dropout(0.5))
-    model.add(Dense(3, activation='softmax'))
-    adam = tf.keras.optimizers.Adam(0.0001)
-    model.compile(loss='categorical_crossentropy',
+    model.add(Dense(6, activation='softmax'))
+
+    adam = tf.keras.optimizers.Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+    
+    model.compile(loss='binary_crossentropy',
                 optimizer=adam,
                 metrics=['accuracy'])
     
