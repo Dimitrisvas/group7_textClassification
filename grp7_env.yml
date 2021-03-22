@@ -11,4 +11,3 @@ dependencies:
   - spacy
   - wheel
   - keras
-  - pickle
