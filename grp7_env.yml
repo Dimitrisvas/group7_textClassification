@@ -10,5 +10,5 @@ dependencies:
   - scikit-learn
   - spacy
   - wheel
-  - tabulate
   - keras
+  - pickle
