@@ -190,10 +190,10 @@ def build_model(num_words):
     model.add(Dropout(0.5))
     model.add(Dense(6, activation='sigmoid'))
 
-    adam = tf.keras.optimizers.Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
-    
+    #adam = tf.keras.optimizers.Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+
     model.compile(loss='binary_crossentropy',
-                optimizer=adam,
-                metrics=['accuracy'])
+                  optimizer='adam',
+                  metrics=['accuracy'])
     
     return model
