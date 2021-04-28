@@ -150,9 +150,13 @@ def save_pickle(preprocessed, file_name):
 # --------------------------------------------
 # Function for all pre-processing functions
 # Intended to make it easier to modify when experimenting with different pre-processing methods
-def preprocess_data(train_dataset):
+# Params:
+    # Pandas Dataframe  - @dataset: Dataset to be pre-processed (train/test)
+    # Str               - @file_name: File name to save pre-processed data as pickle
+# Output: Pickle file in directory/repo
+def preprocess_data(dataset, file_name):
 
-    comment_cleaned = clean_data(train_dataset)
+    comment_cleaned = clean_data(dataset)
     # NLTK Tokenize
     # comment_token = nltk_tokenize(comment_cleaned)
 
