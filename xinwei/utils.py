@@ -150,9 +150,13 @@ def save_pickle(preprocessed, file_name):
 # --------------------------------------------
 # Function for all pre-processing functions
 # Intended to make it easier to modify when experimenting with different pre-processing methods
-def preprocess_data(train_dataset):
+# Params:
+    # Pandas Dataframe  - @dataset: Dataset to be pre-processed (train/test)
+    # Str               - @file_name: File name to save pre-processed data as pickle
+# Output: Pickle file in directory/repo
+def preprocess_data(dataset, file_name):
 
-    comment_cleaned = clean_data(train_dataset)
+    comment_cleaned = clean_data(dataset)
     # NLTK Tokenize
     # comment_token = nltk_tokenize(comment_cleaned)
 
@@ -172,8 +176,8 @@ def preprocess_data(train_dataset):
     # NLTK Lemmatization
     comment_lemma = nltk_lemmatize(comment_token_stop)
 
-    save_pickle(comment_lemma, "comment_lemma")
-    print("Pre-processed data is in the form of comment_lemma.pickle")
+    save_pickle(comment_lemma, file_name)
+    print("Pre-processed data is in the form of {0}.pickle".format(file_name))
 
 def build_model(num_words):
     EPOCHS = 30
