@@ -3,6 +3,8 @@ import tensorflow as tf
 import nltk
 import numpy as np
 import pickle
+import functools
+from functools import lru_cache
 from tabulate import tabulate
 from keras.models import Sequential
 from keras.layers import Dense, Conv1D, Dropout, Conv1D, GlobalMaxPooling1D, Embedding
@@ -114,10 +116,11 @@ def nltk_lemmatize(comment_token_stop):
     nltk.download('averaged_perceptron_tagger')
     comment_lemma = []
     lemmatizer = WordNetLemmatizer()
+    lemmatizer_cache = lru_cache(maxsize=50000)(lemmatizer.lemmatize)
 
     for comment in comment_token_stop:
         temp = []
-        temp.append([lemmatizer.lemmatize(word, pos=nltk_get_wordnet_pos(word)) for word in comment])
+        temp.append([lemmatizer_cache(word, pos=nltk_get_wordnet_pos(word)) for word in comment])
         comment_lemma += temp
 
     return comment_lemma
@@ -176,8 +179,8 @@ def preprocess_data(dataset, file_name):
     # NLTK Lemmatization
     comment_lemma = nltk_lemmatize(comment_token_stop)
 
-    save_pickle(comment_lemma, "comment_lemma")
-    print("Pre-processed data is in the form of comment_lemma.pickle")
+    save_pickle(comment_lemma, file_name)
+    print(f"Pre-processed data is in the form of {file_name}.pickle")
 
 def build_model(num_words):
     EPOCHS = 30
