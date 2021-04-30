@@ -3,6 +3,8 @@ import tensorflow as tf
 import nltk
 import numpy as np
 import pickle
+import functools
+from functools import lru_cache
 from tabulate import tabulate
 from keras.models import Sequential
 from keras.layers import Dense, Conv1D, Dropout, Conv1D, GlobalMaxPooling1D, Embedding
@@ -14,9 +16,9 @@ from gensim.models import Phrases
 from gensim.models.phrases import Phraser
 
 def read_datasets():
-    TRAIN_DATASET = "../train.csv"
-    TEST_DATA = "../test.csv"
-    TEST_LABELS = "../test_labels.csv"
+    TRAIN_DATASET = "train.csv"
+    TEST_DATA = "test.csv"
+    TEST_LABELS = "test_labels.csv"
     REDUNDANT_FIELDS = ["id"]
 
     # Read in training dataset
@@ -46,7 +48,7 @@ def read_datasets():
                                                 (test_dataset.insult == -1) |
                                                 (test_dataset.identity_hate == -1)].index)
     
-    train_dataset = pd.read_pickle("../balanced_dataset.pickle")
+    train_dataset = pd.read_pickle("balanced_dataset.pickle")
 
     return train_dataset, test_dataset
 
@@ -56,7 +58,7 @@ def read_datasets():
 
 # Function to clean comments in train dataset
 # Params: pd dataframe - Training dataset
-# Return: List - cleaned comments
+# Return: 2D List - cleaned comments
 def clean_data(train_dataset):
     # Remove punctuation
     regex_str = "[^a-zA-Z\s]"
@@ -78,11 +80,11 @@ def clean_data(train_dataset):
     return comment_list
 
 # Function to create gensim ngrams with models
-# Params: List - tokenized comments with stopwords removed
-# Returns: List - tokens with bigrams
-def gensim_ngrams(comment_token_stop):
+# Params: 2D List - tokenized comments with stopwords removed
+# Returns: 2D List - tokens with bigrams
+def gensim_ngrams(comment_stop):
     # Create Gensim n-grams
-    return [bigram_model[word] for word in comment_token_stop]
+    return [bigram_model[word] for word in comment_stop]
 
 # Function to create Gensim ngram models
 # Add trigrams etc as needed
@@ -107,35 +109,48 @@ def nltk_get_wordnet_pos(word):
     return tag_dict.get(tag, wordnet.NOUN) # Default to noun if not found
 
 # Function to use NLTK lemmatizer
-# Params: List - tokenized comments with stopwords removed
-# Returns: List - lemmatized tokens
-def nltk_lemmatize(comment_token_stop):
+# Params: 2D List - Tokenized comments with stopwords removed
+# Returns: 2D List - lemmatized tokens
+def nltk_lemmatize(comment_stop):
 
     nltk.download('averaged_perceptron_tagger')
     comment_lemma = []
     lemmatizer = WordNetLemmatizer()
+    lemmatizer_cache = lru_cache(maxsize=50000)(lemmatizer.lemmatize)
 
-    for comment in comment_token_stop:
+    for comment in comment_stop:
         temp = []
-        temp.append([lemmatizer.lemmatize(word, pos=nltk_get_wordnet_pos(word)) for word in comment])
+        temp.append([lemmatizer_cache(word, pos=nltk_get_wordnet_pos(word)) for word in comment])
         comment_lemma += temp
 
     return comment_lemma
 
 # Function to remove NLTK stopwords
-# Params: List - cleaned comments
-# Returns: List - cleaned comments with stopwords removed
-def nltk_stopwords(comment_cleaned):
+# Params: 2D List - cleaned & tokenized comments
+# Returns: 2D List - cleaned tokens with stopwords removed
+def nltk_stopwords(comment_token):
     # Stopwords in English only
     STOP_WORDS = set(stopwords.words('english'))
+
     # Remove stopwords
-    comment_stop = [word for word in comment_cleaned if word not in STOP_WORDS]
+    comment_stop = []
+
+    for comment in comment_token:
+        
+        temp_word = []
+
+        for word in comment:
+            
+            if word not in STOP_WORDS:
+                temp_word.append(word)
+
+        comment_stop.append(temp_word)
     
     return comment_stop
 
 # Function to tokenize comments using NLTK Word Tokenize
-# Params: List - cleaned comments
-# Returns: List - tokenized comments
+# Params: 2D List - cleaned comments
+# Returns: 2D List - tokenized comments
 def nltk_tokenize(text):
     return [word_tokenize(word) for word in text]
 
@@ -157,27 +172,26 @@ def save_pickle(preprocessed, file_name):
 def preprocess_data(dataset, file_name):
 
     comment_cleaned = clean_data(dataset)
+    
     # NLTK Tokenize
-    # comment_token = nltk_tokenize(comment_cleaned)
+    comment_token = nltk_tokenize(comment_cleaned)
 
     # Create gensim ngram model
     # Commented out because unused in base model
     # bigram_model = gensim_ngrams_model()
 
     # Remove NLTK stopwords
-    comment_stop = nltk_stopwords(comment_cleaned)
-    # NLTK Tokenize
-    comment_token_stop = nltk_tokenize(comment_stop)
+    comment_stop = nltk_stopwords(comment_token)
 
     # Create gensim bigrams
     # Commented out because unused in base model
     #gensim_bigrams = gensim_ngrams(comment_stop_token)
 
     # NLTK Lemmatization
-    comment_lemma = nltk_lemmatize(comment_token_stop)
+    comment_lemma = nltk_lemmatize(comment_stop)
 
     save_pickle(comment_lemma, file_name)
-    print("Pre-processed data is in the form of {0}.pickle".format(file_name))
+    print(f"Pre-processed data is in the form of {file_name}.pickle")
 
 def build_model(num_words):
     EPOCHS = 30
