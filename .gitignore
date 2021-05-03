@@ -131,3 +131,8 @@ dmypy.json
 /priv.ppk
 /pub
 /dimitris_individual/wiki-news-300d-1M.vec
+/6481784_individual.rar
+/6481784_individual/data/glove.6B.50d.txt
+/6481784_individual/data/test.csv
+/6481784_individual/data/test_labels.csv
+/6481784_individual/data/train.csv
