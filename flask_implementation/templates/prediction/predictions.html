@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<div class="container-fluid">
+    <h1>{% block title %}Predictions{% endblock %}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    {{data | safe}}
+</div>
+<hr>
+
+{% endblock %}
