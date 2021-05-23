@@ -18,8 +18,8 @@
         </thead>
         {% for comment in comments %}
         <tr>
-            <td>{{ comment['comment_text'] }}</td>
-            <td>{{ comment['created'].strftime('%Y-%m-%d') }}</td>        
+            <td>{{ comment[1] }}</td>
+            <td>{{ comment[2] }}</td>        
         </tr>
         {% endfor %}
     </table>

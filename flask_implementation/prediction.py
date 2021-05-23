@@ -74,7 +74,6 @@ def index():
         
         # If no error
         else:
-
             # Initialize boolean for whether comment is toxic
             toxic = False
             # Dataframe of comment input
@@ -97,21 +96,20 @@ def index():
             global df # global to pass to /predictions.html
             df = df.append(new_row, ignore_index=True)
             
-            # If comment is not toxic, add to database
-            if not toxic:
-            
-                try:
-                    db = get_db()
-                    db.execute(
-                        'INSERT INTO comment (comment)'
-                        ' VALUES (?)',
-                        (comment)
-                    )
-                    db.commit()
-                    return redirect('prediction/predictions.html')
+            try:
+                con = sqlite3.connect("./instance/database.db")
+                cur = con.cursor()
+                cur.execute(
+                    'INSERT INTO comment(comment_text)'
+                    ' VALUES (?)',
+                    (comment,)
+                )
+                con.commit()
 
-                except sqlite3.Error as e:
-                    logging.error(e)
+                return redirect('predictions')
+
+            except sqlite3.Error as e:
+                logging.error(e)
 
     return render_template('index.html')
 

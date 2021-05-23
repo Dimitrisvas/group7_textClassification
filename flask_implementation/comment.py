@@ -15,21 +15,25 @@ bp = Blueprint('comment', __name__)
 all_comments = []
 
 # Set route and method, function name has to match route and .html file name
-@bp.route('/comments', methods=['GET'])
+@bp.route('/comment', methods=['GET'])
 def comments():
 
     # Connect to db
-    con = get_db()
+    #con = __init__.db
+    con = sqlite3.connect("./instance/database.db") #get_db()
     db = con.cursor()
 
     global all_comments
 
     try:
-        all_comments = db.execute(
-            'SELECT comment_text, created'
+        db.execute(
+            'SELECT *'
             ' FROM comment'
             ' ORDER BY created DESC'
-        ).fetchall()
+        )
+        #db.execute("SELECT * FROM comment;")
+        all_comments = db.fetchall()
+        print(all_comments)
 
     except sqlite3.Error as e:
         logging.error(e)
