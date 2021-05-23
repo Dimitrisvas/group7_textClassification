@@ -100,9 +100,10 @@ def index():
                 con = sqlite3.connect("./instance/database.db")
                 cur = con.cursor()
                 cur.execute(
-                    'INSERT INTO comment(comment_text)'
-                    ' VALUES (?)',
-                    (comment,)
+                    'INSERT INTO comment(comment_text,toxic,severe_toxic,obscene,threat,insult,identity_hate)'
+                    ' VALUES (?,?,?,?,?,?,?)',
+                    (comment,prediction[0][0],prediction[0][1],prediction[0][2],
+                     prediction[0][3],prediction[0][4],prediction[0][5],)
                 )
                 con.commit()
 
