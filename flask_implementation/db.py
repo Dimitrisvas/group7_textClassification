@@ -22,7 +22,6 @@ def get_db():
     if 'db' not in g:
 
         try:
-            #g.db = sqlite3.connect("./instance/database.db")
             g.db = sqlite3.connect(
                 current_app.config['DATABASE'],
                 detect_types=sqlite3.PARSE_DECLTYPES

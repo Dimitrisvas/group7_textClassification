@@ -32,6 +32,7 @@ def comments():
             ' ORDER BY created DESC'
         )
         all_comments = db.fetchall()
+        con.close()
 
     except sqlite3.Error as e:
         logging.error(e)
