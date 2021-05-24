@@ -38,10 +38,6 @@ def create_app(test_config=None):
     @app.route('/')
     def index():
         return render_template('index.html')
-    
-    #@app.route('/predictions', methods=['GET','POST'])
-    #def predictions():
-    #    return render_template("predictions.html")
 
     # Initialize db with app
     from . import db
@@ -54,7 +50,6 @@ def create_app(test_config=None):
     # Register 'templates/prediction' as a set of views
     from . import prediction
     app.register_blueprint(prediction.bp)
-    #app.add_url_rule('/', endpoint='index')
 
     return app
 
