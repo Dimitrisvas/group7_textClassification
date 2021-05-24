@@ -22,10 +22,7 @@ def get_db():
     if 'db' not in g:
 
         try:
-            g.db = sqlite3.connect(
-                current_app.config['DATABASE'],
-                detect_types=sqlite3.PARSE_DECLTYPES
-            )
+            g.db = sqlite3.connect("./instance/database.db")
             g.db.row_factory = sqlite3.Row
         
         except Exception as e:
