@@ -167,21 +167,30 @@ def preprocess_data_without_pickle(dataset):
     else:
         return dataset
 
-# Get preprocessed train dataset
-bal_train_dataset = load_pickle(PREPROCESSED_BAL_TRAIN_DATASET)
+# Function to get dataset
+# Output:
+#   2D List - @bal_train_dataset: Training data
+#   2D List - @bal_train_y      : Labels for training data
+def get_dataset():
+    # Get preprocessed train dataset
+    bal_train_dataset = load_pickle(PREPROCESSED_BAL_TRAIN_DATASET)
 
-# Get preprocessed test dataset
-bal_test_dataset = load_pickle(PREPROCESSED_BAL_TEST_DATASET)
+    # Get train_y
+    bal_train_y = pd.read_pickle(BALANCED_TRAIN_DATASET)
+    bal_train_y = bal_train_y.drop(columns="comment_text")
 
-# Get train_y
-bal_train_y = pd.read_pickle(BALANCED_TRAIN_DATASET)
-bal_train_y = bal_train_y.drop(columns="comment_text")
+    return bal_train_dataset, bal_train_y
 
-# Get test_y
-bal_test_y = pd.read_pickle(BALANCED_TEST_DATASET)
-bal_test_y = bal_test_y.drop(columns="comment_text")
+# Function to build pipeline
+# Output:
+#   sklearn Model Pipeline - @pipe: Pipeline containing TFIDFVectorizer and model
+def build_pipeline():
 
-pipe = Pipeline([ 
+    # Build pipeline with TFIDF Vectorizer
+    # Pass in dummy function into tokenizer
+    # Pass in our custom preprocess function
+    # Create Multinomial Naive Bayes MultiOutputClassifier model
+    pipe = Pipeline([ 
     ('tfidf', TfidfVectorizer(
         analyzer='word', 
         tokenizer=fake_function, 
@@ -194,6 +203,14 @@ pipe = Pipeline([
     ('multi_mnb', MultiOutputClassifier(MultinomialNB(), n_jobs=-1))
     ])
 
-pipe.fit(bal_train_dataset, bal_train_y)
+    return pipe
 
-joblib.dump(pipe, 'multi_mnb_model.pkl', compress=1)
+if __name__ == '__main__':
+    # Get training data
+    train_x, train_y = get_dataset()
+    # Build pipeline with model and TFIDFVectorizer
+    pipe = build_pipeline()
+    # Fit pipeline
+    pipe.fit(train_x, train_y)
+    # Save model
+    joblib.dump(pipe, 'flask_implementation/multi_mnb_model_test.joblib', compress=1)
