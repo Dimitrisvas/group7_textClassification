@@ -91,6 +91,7 @@ def index():
                 # If value of any label is 1, comment is toxic
                 if prediction[0][i] == 1:
                     toxic = True
+                    
 
             # Append row to dataframe
             global df # global to pass to /predictions.html
@@ -106,6 +107,7 @@ def index():
                      prediction[0][3],prediction[0][4],prediction[0][5],)
                 )
                 con.commit()
+                con.close()
 
                 return redirect('predictions')
 
