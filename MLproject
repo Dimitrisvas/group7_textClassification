@@ -1,0 +1,7 @@
+name: grp7_txt
+
+conda_env: grp7_env.yml
+
+entry_points:
+  main:
+    command: "python -m flask_implementation.__init__"
