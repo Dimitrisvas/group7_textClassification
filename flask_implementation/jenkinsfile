@@ -4,7 +4,7 @@ pipeline {
         stage('build') {
             steps {
                 bat 'cd C:\\Repositories\\group7_textClassification\\'
-                bat 'python --version'
+                bat 'python -m flask_implementation.__init__'
             }
         }
     }
