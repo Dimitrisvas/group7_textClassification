@@ -2,7 +2,7 @@ import requests
 
 HOME_URL = 'http://localhost:5000/'
 
-COMMENT = "it's me"
+COMMENT = "flask testing"
 
 def submit_comment(comment):
     return requests.post(HOME_URL, data={
@@ -32,11 +32,7 @@ def comments_test(COMMENT):
 
     for i in range(3):
         COMMENTS.append(f'{[i]}-{COMMENT}')
-    r = submit_comment(COMMENTS[0])
-
-    r = submit_comment(COMMENTS[1])
-
-    r = submit_comment(COMMENTS[2])
+        r = submit_comment(COMMENTS[i])
 
     r = goto_comments()
     if ((COMMENTS[0] in r.text) & (COMMENTS[1] in r.text) & (COMMENTS[2] in r.text)):
