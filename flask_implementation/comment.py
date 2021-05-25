@@ -19,8 +19,7 @@ all_comments = []
 def comments():
 
     # Connect to db
-    #con = __init__.db
-    con = sqlite3.connect("./instance/database.db") #get_db()
+    con = sqlite3.connect("./instance/database.db")
     db = con.cursor()
 
     global all_comments

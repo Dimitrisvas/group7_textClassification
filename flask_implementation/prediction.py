@@ -64,7 +64,7 @@ def index():
         # Error check
         error = None
 
-        # If comment is empty
+        # If comment is empty (currently uses html's 'required' thing so this probably isnt needed)
         if not comment:
             error = 'Comment is required.'
 
@@ -74,7 +74,8 @@ def index():
         
         # If no error
         else:
-
+            # Initialize boolean for whether comment is toxic
+            toxic = False
             # Dataframe of comment input
             comment_df = convert_for_pred(comment)
 
@@ -87,7 +88,11 @@ def index():
             # Add actual prediction values
             for i in range(len(labels)):
                 new_row[labels[i]] = prediction[0][i]
+                # If value of any label is 1, comment is toxic
+                if prediction[0][i] == 1:
+                    toxic = True
                     
+
             # Append row to dataframe
             global df # global to pass to /predictions.html
             df = df.append(new_row, ignore_index=True)
@@ -116,4 +121,14 @@ def index():
 @bp.route('/predictions', methods=('GET','POST'))
 def predictions():
     return render_template("prediction/predictions.html", data=df.to_html())
-    
+
+#@app.route('/', methods=['POST', 'GET'])
+#def get_data():
+#    if request.method == 'POST':
+#        user = request.form['search']
+#        return redirect(url_for('success', name=user))
+
+
+#@app.route('/success/<name>')
+#def success(name):
+#    return "<xmp>" + str(requestResults(name)) + " </xmp> "
